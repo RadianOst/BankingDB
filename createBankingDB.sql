@@ -1,5 +1,5 @@
 --drop database banking;
-create database banking;
-create schema public;
+CREATE DATABASE banking;
+CREATE SCHEMA public;
 
-alter database banking owner to admin;
+ALTER DATABASE banking OWNER TO admin;

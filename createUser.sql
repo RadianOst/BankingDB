@@ -1,2 +1,2 @@
-create user admin
-with password 'admin123';
+CREATE USER admin
+  WITH PASSWORD 'admin123';

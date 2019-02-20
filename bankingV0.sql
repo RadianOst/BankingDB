@@ -1,315 +1,331 @@
-
-create table banking.public.address
+CREATE TABLE banking.public.address
 (
-	address_id serial not null
-		constraint address_pk
-			primary key,
-	street varchar(60),
-	postal_code varchar(6),
-	city varchar(60)
+  address_id  SERIAL NOT NULL
+    CONSTRAINT address_pk
+      PRIMARY KEY,
+  street      VARCHAR(60),
+  postal_code VARCHAR(6),
+  city        VARCHAR(60)
 );
 
-alter table banking.public.address owner to admin;
+ALTER TABLE banking.public.address
+  OWNER TO admin;
 
-create table banking.public.users
+CREATE TABLE banking.public.users
 (
-	user_id serial not null
-		constraint users_pk
-			primary key,
-	name varchar(60) not null,
-	surname varchar(60) not null,
-	address_id integer
-		constraint users_adresses_fk
-			references banking.public.address
-				on update cascade on delete set null,
-	pesel varchar(11)
+  user_id    SERIAL      NOT NULL
+    CONSTRAINT users_pk
+      PRIMARY KEY,
+  name       VARCHAR(60) NOT NULL,
+  surname    VARCHAR(60) NOT NULL,
+  address_id INTEGER
+    CONSTRAINT users_adresses_fk
+      REFERENCES banking.public.address
+      ON UPDATE CASCADE ON DELETE SET NULL,
+  pesel      VARCHAR(11)
 );
 
-alter table banking.public.users owner to admin;
+ALTER TABLE banking.public.users
+  OWNER TO admin;
 
-create unique index users_id_uindex
-	on banking.public.users (user_id);
+CREATE UNIQUE INDEX users_id_uindex
+  ON banking.public.users (user_id);
 
-create unique index users_pesel_uindex
-	on banking.public.users (pesel);
+CREATE UNIQUE INDEX users_pesel_uindex
+  ON banking.public.users (pesel);
 
-create unique index address_address_id_uindex
-	on banking.public.address (address_id);
+CREATE UNIQUE INDEX address_address_id_uindex
+  ON banking.public.address (address_id);
 
-create table banking.public.currencies
+CREATE TABLE banking.public.currencies
 (
-	currency_id serial not null
-		constraint currencies_pk
-			primary key,
-	main_currency_value numeric(12,8) not null,
-	symbol varchar(3),
-	shortcut varchar(10)
+  currency_id         SERIAL         NOT NULL
+    CONSTRAINT currencies_pk
+      PRIMARY KEY,
+  main_currency_value NUMERIC(12, 8) NOT NULL,
+  symbol              VARCHAR(3),
+  shortcut            VARCHAR(10)
 );
 
-alter table banking.public.currencies owner to admin;
+ALTER TABLE banking.public.currencies
+  OWNER TO admin;
 
-create table banking.public.account_types
+CREATE TABLE banking.public.account_types
 (
-	account_type_id serial not null
-		constraint account_types_pk
-			primary key,
-	name varchar(100) not null,
-	currency_id integer
-		constraint account_types_currencies_currency_id_fk
-			references banking.public.currencies
+  account_type_id SERIAL       NOT NULL
+    CONSTRAINT account_types_pk
+      PRIMARY KEY,
+  name            VARCHAR(100) NOT NULL,
+  currency_id     INTEGER
+    CONSTRAINT account_types_currencies_currency_id_fk
+      REFERENCES banking.public.currencies
 );
 
-alter table banking.public.account_types owner to admin;
+ALTER TABLE banking.public.account_types
+  OWNER TO admin;
 
-create unique index account_types_account_types_id_uindex
-	on banking.public.account_types (account_type_id);
+CREATE UNIQUE INDEX account_types_account_types_id_uindex
+  ON banking.public.account_types (account_type_id);
 
-create table banking.public.accounts
+CREATE TABLE banking.public.accounts
 (
-	account_id serial not null
-		constraint accounts_pk
-			primary key,
-	account_type_id integer
-		constraint accounts_account_type_fk
-			references banking.public.account_types,
-	number varchar(30) not null,
-	user_id integer
-		constraint accounts_users_users_fk
-			references banking.public.users
-				on update cascade on delete set null
+  account_id      SERIAL      NOT NULL
+    CONSTRAINT accounts_pk
+      PRIMARY KEY,
+  account_type_id INTEGER
+    CONSTRAINT accounts_account_type_fk
+      REFERENCES banking.public.account_types,
+  number          VARCHAR(30) NOT NULL,
+  user_id         INTEGER
+    CONSTRAINT accounts_users_users_fk
+      REFERENCES banking.public.users
+      ON UPDATE CASCADE ON DELETE SET NULL
 );
 
-alter table banking.public.accounts owner to admin;
+ALTER TABLE banking.public.accounts
+  OWNER TO admin;
 
-create unique index accounts_account_id_uindex
-	on banking.public.accounts (account_id);
+CREATE UNIQUE INDEX accounts_account_id_uindex
+  ON banking.public.accounts (account_id);
 
-create unique index accounts_number_uindex
-	on banking.public.accounts (number);
+CREATE UNIQUE INDEX accounts_number_uindex
+  ON banking.public.accounts (number);
 
-create unique index currencies_currency_id_uindex
-	on banking.public.currencies (currency_id);
+CREATE UNIQUE INDEX currencies_currency_id_uindex
+  ON banking.public.currencies (currency_id);
 
-create table banking.public.credit_types
+CREATE TABLE banking.public.credit_types
 (
-	credit_type_id serial not null
-		constraint credit_types_pk
-			primary key,
-	name varchar(100),
-	interest numeric(6,2) not null,
-	instalments_number integer not null,
-	interval integer default 1 not null,
-	currency_id integer
-		constraint credit_types_currencies_currency_id_fk
-			references banking.public.currencies,
-	value numeric(20,2)
+  credit_type_id     SERIAL            NOT NULL
+    CONSTRAINT credit_types_pk
+      PRIMARY KEY,
+  name               VARCHAR(100),
+  interest           NUMERIC(6, 2)     NOT NULL,
+  instalments_number INTEGER           NOT NULL,
+  interval           INTEGER DEFAULT 1 NOT NULL,
+  currency_id        INTEGER
+    CONSTRAINT credit_types_currencies_currency_id_fk
+      REFERENCES banking.public.currencies,
+  value              NUMERIC(20, 2)
 );
 
-alter table banking.public.credit_types owner to admin;
+ALTER TABLE banking.public.credit_types
+  OWNER TO admin;
 
-create unique index credit_types_credit_type_id_uindex
-	on banking.public.credit_types (credit_type_id);
+CREATE UNIQUE INDEX credit_types_credit_type_id_uindex
+  ON banking.public.credit_types (credit_type_id);
 
-create table banking.public.credits
+CREATE TABLE banking.public.credits
 (
-	credit_id serial not null
-		constraint credits_pk
-			primary key,
-	credit_type_id integer not null
-		constraint credits_credit_types_credit_type_id_fk
-			references banking.public.credit_types,
-	user_id integer not null
-		constraint credits_users_user_id_fk
-			references banking.public.users,
-	start_date date not null
+  credit_id      SERIAL  NOT NULL
+    CONSTRAINT credits_pk
+      PRIMARY KEY,
+  credit_type_id INTEGER NOT NULL
+    CONSTRAINT credits_credit_types_credit_type_id_fk
+      REFERENCES banking.public.credit_types,
+  user_id        INTEGER NOT NULL
+    CONSTRAINT credits_users_user_id_fk
+      REFERENCES banking.public.users,
+  start_date     DATE    NOT NULL
 );
 
-alter table banking.public.credits owner to admin;
+ALTER TABLE banking.public.credits
+  OWNER TO admin;
 
-create unique index credits_credit_id_uindex
-	on banking.public.credits (credit_id);
+CREATE UNIQUE INDEX credits_credit_id_uindex
+  ON banking.public.credits (credit_id);
 
-create table banking.public.investment_types
+CREATE TABLE banking.public.investment_types
 (
-	investment_type_id serial not null
-		constraint investment_types_pk
-			primary key,
-	name varchar(100),
-	interest numeric(6,2),
-	instalment_value numeric(8,2),
-	minimal_instalment_number integer
+  investment_type_id        SERIAL NOT NULL
+    CONSTRAINT investment_types_pk
+      PRIMARY KEY,
+  name                      VARCHAR(100),
+  interest                  NUMERIC(6, 2),
+  instalment_value          NUMERIC(8, 2),
+  minimal_instalment_number INTEGER
 );
 
-alter table banking.public.investment_types owner to admin;
+ALTER TABLE banking.public.investment_types
+  OWNER TO admin;
 
-create unique index investment_types_investment_type_id_uindex
-	on banking.public.investment_types (investment_type_id);
+CREATE UNIQUE INDEX investment_types_investment_type_id_uindex
+  ON banking.public.investment_types (investment_type_id);
 
-create table banking.public.investments
+CREATE TABLE banking.public.investments
 (
-	investment_id serial not null
-		constraint investments_pk
-			primary key,
-	investment_type_id integer
-		constraint investments_investment_types_investment_type_id_fk
-			references banking.public.investment_types,
-	user_id integer
-		constraint investments_users_user_id_fk
-			references banking.public.users,
-	start_date date not null
+  investment_id      SERIAL NOT NULL
+    CONSTRAINT investments_pk
+      PRIMARY KEY,
+  investment_type_id INTEGER
+    CONSTRAINT investments_investment_types_investment_type_id_fk
+      REFERENCES banking.public.investment_types,
+  user_id            INTEGER
+    CONSTRAINT investments_users_user_id_fk
+      REFERENCES banking.public.users,
+  start_date         DATE   NOT NULL
 );
 
-alter table banking.public.investments owner to admin;
+ALTER TABLE banking.public.investments
+  OWNER TO admin;
 
-create unique index investments_investment_id_uindex
-	on banking.public.investments (investment_id);
+CREATE UNIQUE INDEX investments_investment_id_uindex
+  ON banking.public.investments (investment_id);
 
-create table banking.public.card_producers
+CREATE TABLE banking.public.card_producers
 (
-	card_producer_id serial not null
-		constraint card_producers_pk
-			primary key,
-	name varchar(50) not null,
-	security_length integer not null
+  card_producer_id SERIAL      NOT NULL
+    CONSTRAINT card_producers_pk
+      PRIMARY KEY,
+  name             VARCHAR(50) NOT NULL,
+  security_length  INTEGER     NOT NULL
 );
 
-alter table banking.public.card_producers owner to admin;
+ALTER TABLE banking.public.card_producers
+  OWNER TO admin;
 
-create unique index card_producers_card_producer_id_uindex
-	on banking.public.card_producers (card_producer_id);
+CREATE UNIQUE INDEX card_producers_card_producer_id_uindex
+  ON banking.public.card_producers (card_producer_id);
 
-create unique index card_producers_name_uindex
-	on banking.public.card_producers (name);
+CREATE UNIQUE INDEX card_producers_name_uindex
+  ON banking.public.card_producers (name);
 
-create table banking.public.card_types
+CREATE TABLE banking.public.card_types
 (
-	card_type_id serial not null
-		constraint card_types_pk
-			primary key,
-	type_info varchar(200),
-	card_producer_id integer
-		constraint card_types_card_producers_card_producer_id_fk
-			references banking.public.card_producers
+  card_type_id     SERIAL NOT NULL
+    CONSTRAINT card_types_pk
+      PRIMARY KEY,
+  type_info        VARCHAR(200),
+  card_producer_id INTEGER
+    CONSTRAINT card_types_card_producers_card_producer_id_fk
+      REFERENCES banking.public.card_producers
 );
 
-alter table banking.public.card_types owner to admin;
+ALTER TABLE banking.public.card_types
+  OWNER TO admin;
 
-create unique index card_types_card_type_id_uindex
-	on banking.public.card_types (card_type_id);
+CREATE UNIQUE INDEX card_types_card_type_id_uindex
+  ON banking.public.card_types (card_type_id);
 
-create table banking.public.cards
+CREATE TABLE banking.public.cards
 (
-	card_id serial not null
-		constraint cards_pk
-			primary key,
-	card_type_id integer
-		constraint cards_card_types_card_type_id_fk
-			references banking.public.card_types,
-	expiration_date date not null,
-	release_date date not null,
-	security_code varchar(5) not null,
-	user_id integer
-		constraint cards_users_user_id_fk
-			references banking.public.users,
-	card_number varchar(30)
+  card_id         SERIAL     NOT NULL
+    CONSTRAINT cards_pk
+      PRIMARY KEY,
+  card_type_id    INTEGER
+    CONSTRAINT cards_card_types_card_type_id_fk
+      REFERENCES banking.public.card_types,
+  expiration_date DATE       NOT NULL,
+  release_date    DATE       NOT NULL,
+  security_code   VARCHAR(5) NOT NULL,
+  user_id         INTEGER
+    CONSTRAINT cards_users_user_id_fk
+      REFERENCES banking.public.users,
+  card_number     VARCHAR(30)
 );
 
-alter table banking.public.cards owner to admin;
+ALTER TABLE banking.public.cards
+  OWNER TO admin;
 
-create table banking.public.account_cards
+CREATE TABLE banking.public.account_cards
 (
-	account_card_id serial not null
-		constraint account_cards_pk
-			primary key,
-	account_id integer
-		constraint account_cards_accounts_account_id_fk
-			references banking.public.accounts,
-	card_id integer
-		constraint account_cards_cards_card_id_fk
-			references banking.public.cards
+  account_card_id SERIAL NOT NULL
+    CONSTRAINT account_cards_pk
+      PRIMARY KEY,
+  account_id      INTEGER
+    CONSTRAINT account_cards_accounts_account_id_fk
+      REFERENCES banking.public.accounts,
+  card_id         INTEGER
+    CONSTRAINT account_cards_cards_card_id_fk
+      REFERENCES banking.public.cards
 );
 
-alter table banking.public.account_cards owner to admin;
+ALTER TABLE banking.public.account_cards
+  OWNER TO admin;
 
-create unique index account_cards_account_card_id_uindex
-	on banking.public.account_cards (account_card_id);
+CREATE UNIQUE INDEX account_cards_account_card_id_uindex
+  ON banking.public.account_cards (account_card_id);
 
-create unique index cards_card_id_uindex
-	on banking.public.cards (card_id);
+CREATE UNIQUE INDEX cards_card_id_uindex
+  ON banking.public.cards (card_id);
 
-create unique index cards_card_number_uindex
-	on banking.public.cards (card_number);
+CREATE UNIQUE INDEX cards_card_number_uindex
+  ON banking.public.cards (card_number);
 
-create table banking.public.employees
+CREATE TABLE banking.public.employees
 (
-	employee_id serial not null
-		constraint employees_pk
-			primary key,
-	name varchar(60) not null,
-	surname varchar(60) not null,
-	basic_payment integer
+  employee_id   SERIAL      NOT NULL
+    CONSTRAINT employees_pk
+      PRIMARY KEY,
+  name          VARCHAR(60) NOT NULL,
+  surname       VARCHAR(60) NOT NULL,
+  basic_payment INTEGER
 );
 
-alter table banking.public.employees owner to admin;
+ALTER TABLE banking.public.employees
+  OWNER TO admin;
 
-create table banking.public.departments
+CREATE TABLE banking.public.departments
 (
-	department_id serial not null
-		constraint departments_pk
-			primary key,
-	name varchar(200),
-	employee_id integer
-		constraint departments_employees_employee_id_fk
-			references banking.public.employees
+  department_id SERIAL NOT NULL
+    CONSTRAINT departments_pk
+      PRIMARY KEY,
+  name          VARCHAR(200),
+  employee_id   INTEGER
+    CONSTRAINT departments_employees_employee_id_fk
+      REFERENCES banking.public.employees
 );
 
-alter table banking.public.departments owner to admin;
+ALTER TABLE banking.public.departments
+  OWNER TO admin;
 
-create unique index departments_department_id_uindex
-	on banking.public.departments (department_id);
+CREATE UNIQUE INDEX departments_department_id_uindex
+  ON banking.public.departments (department_id);
 
-create unique index employees_employee_id_uindex
-	on banking.public.employees (employee_id);
+CREATE UNIQUE INDEX employees_employee_id_uindex
+  ON banking.public.employees (employee_id);
 
-create table salary_history
+CREATE TABLE salary_history
 (
-	salary_history_id serial not null
-		constraint salary_history_pk
-			primary key,
-	date date default CURRENT_DATE not null,
-	employee_id integer
-		constraint salary_history_employees_employee_id_fk
-			references banking.public.employees,
-	amount numeric(10,2) not null,
-	currency_id integer
-		constraint salary_history_currencies_currency_id_fk
-			references banking.public.currencies
+  salary_history_id SERIAL                    NOT NULL
+    CONSTRAINT salary_history_pk
+      PRIMARY KEY,
+  date              DATE DEFAULT CURRENT_DATE NOT NULL,
+  employee_id       INTEGER
+    CONSTRAINT salary_history_employees_employee_id_fk
+      REFERENCES banking.public.employees,
+  amount            NUMERIC(10, 2)            NOT NULL,
+  currency_id       INTEGER
+    CONSTRAINT salary_history_currencies_currency_id_fk
+      REFERENCES banking.public.currencies
 );
 
-alter table banking.public.salary_history owner to admin;
+ALTER TABLE banking.public.salary_history
+  OWNER TO admin;
 
-create unique index salary_history_salary_history_id_uindex
-	on banking.public.salary_history (salary_history_id);
+CREATE UNIQUE INDEX salary_history_salary_history_id_uindex
+  ON banking.public.salary_history (salary_history_id);
 
-create table banking.public.transfers
+CREATE TABLE banking.public.transfers
 (
-	transfer_id serial not null
-		constraint transfers_pk
-			primary key,
-	value numeric(15,2) not null,
-	currency_id integer
-		constraint transfers_currencies_currency_id_fk
-			references banking.public.currencies,
-	date date default CURRENT_DATE not null,
-	exchange_rate numeric(15,6) not null,
-	sender_number varchar(30) not null,
-	receiver_number varchar(30) not null,
-	is_sender_client boolean default false,
-	is_receiver_client boolean default false
+  transfer_id        SERIAL                       NOT NULL
+    CONSTRAINT transfers_pk
+      PRIMARY KEY,
+  value              NUMERIC(15, 2)               NOT NULL,
+  currency_id        INTEGER
+    CONSTRAINT transfers_currencies_currency_id_fk
+      REFERENCES banking.public.currencies,
+  date               DATE    DEFAULT CURRENT_DATE NOT NULL,
+  exchange_rate      NUMERIC(15, 6)               NOT NULL,
+  sender_number      VARCHAR(30)                  NOT NULL,
+  receiver_number    VARCHAR(30)                  NOT NULL,
+  is_sender_client   BOOLEAN DEFAULT FALSE,
+  is_receiver_client BOOLEAN DEFAULT FALSE
 );
 
-alter table banking.public.transfers owner to admin;
+ALTER TABLE banking.public.transfers
+  OWNER TO admin;
 
-create unique index transfers_transfer_id_uindex
-	on banking.public.transfers (transfer_id);
+CREATE UNIQUE INDEX transfers_transfer_id_uindex
+  ON banking.public.transfers (transfer_id);
 
