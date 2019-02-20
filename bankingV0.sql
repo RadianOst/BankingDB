@@ -1,7 +1,3 @@
-drop database banking;
-create database banking;
-
-alter database banking owner to admin;
 
 create table banking.public.address
 (
