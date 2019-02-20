@@ -1,9 +1,10 @@
-create table db_version
+CREATE TABLE db_version
 (
-  current_version varchar(10) not null
+  current_version VARCHAR(10) NOT NULL
 );
 
-alter table db_version
-  owner to admin;
+ALTER TABLE db_version
+  OWNER TO admin;
 
-INSERT INTO public.db_version (current_version) VALUES ('2_00');
+INSERT INTO public.db_version (current_version)
+VALUES ('2_00');

@@ -1,9 +1,9 @@
-alter table currencies
-	add name varchar(20) not null;
+ALTER TABLE currencies
+  ADD name VARCHAR(20) NOT NULL;
 
-create unique index currencies_name_uindex
-	on currencies (name);
+CREATE UNIQUE INDEX currencies_name_uindex
+  ON currencies (name);
 
-create unique index currencies_symbol_uindex
-	on currencies (symbol);
+CREATE UNIQUE INDEX currencies_symbol_uindex
+  ON currencies (symbol);
 

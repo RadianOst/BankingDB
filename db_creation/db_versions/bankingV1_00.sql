@@ -1,2 +1,2 @@
-alter table address alter column postal_code type varchar(20) using postal_code::varchar(20);
-
+ALTER TABLE address
+  ALTER COLUMN postal_code TYPE VARCHAR(20) USING postal_code::VARCHAR(20);
