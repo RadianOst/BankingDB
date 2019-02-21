@@ -10,9 +10,12 @@ alter table cards alter column card_number type varchar(19) using card_number::v
 
 alter table cards alter column card_number set not null;
 
+alter table cards drop column release_date;
+
 alter table cards drop constraint cards_users_user_id_fk;
 
 alter table cards
 	add constraint cards_accounts_account_id_fk
 		foreign key (account_id) references accounts;
 
+UPDATE public.db_version SET current_version = '5_00' WHERE id = 1;
