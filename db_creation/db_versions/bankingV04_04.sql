@@ -7005,3 +7005,6 @@ insert into address (street, postal_code, city) values ('737 Almo Street', '4612
 insert into address (street, postal_code, city) values ('1 North Terrace', null, 'Nunbaundelha');
 insert into address (street, postal_code, city) values ('83 Johnson Park', '50136', 'Firenze');
 insert into address (street, postal_code, city) values ('1739 Comanche Court', '6419', 'San Vicente');
+
+UPDATE public.db_version
+SET current_version = '4_04' WHERE db_version.id = 1;
