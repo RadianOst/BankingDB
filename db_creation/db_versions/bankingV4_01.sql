@@ -33,3 +33,6 @@ INSERT INTO public.currencies (currency_id, main_currency_value, symbol, quantit
 INSERT INTO public.currencies (currency_id, main_currency_value, symbol, quantity, name) VALUES (33, 1.05590000, 'ILS', 1, 'Szekel izraelski');
 INSERT INTO public.currencies (currency_id, main_currency_value, symbol, quantity, name) VALUES (34, 0.34060000, 'KRW', 100, 'Won (Korea Płd.)');
 INSERT INTO public.currencies (currency_id, main_currency_value, symbol, quantity, name) VALUES (35, 5.32790000, 'XDR', 1, 'SDR (MFW)');
+
+UPDATE public.db_version
+SET current_version = '4_01';
