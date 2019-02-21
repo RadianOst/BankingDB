@@ -1,2 +1,6 @@
-alter table accounts
-	add balance DECIMAL(15,2) default 0 not null;
+ALTER TABLE accounts
+  ADD balance DECIMAL(15, 2) DEFAULT 0 NOT NULL;
+
+UPDATE public.db_version
+SET current_version = '07_00'
+WHERE db_version.id = 1;
