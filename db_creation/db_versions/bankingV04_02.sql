@@ -1,5 +1,5 @@
 INSERT INTO "public"."credit_types" ("credit_type_id", "name", "interest", "instalments_number", "interval",
-                                     "currency_id", "value")
+                                     "currency_id", max_value)
 VALUES (DEFAULT, 'wooden', 50.00, 2, 1, 1, 1000000.00);
 
 ALTER  TABLE public.db_version ADD COLUMN id SERIAL PRIMARY KEY;
